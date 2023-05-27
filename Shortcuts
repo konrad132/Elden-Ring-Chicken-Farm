@@ -1,0 +1,77 @@
+import pydirectinput
+import time
+import win32api
+import win32con
+import datetime
+
+
+def holdkey(key, seconds):
+    pydirectinput.keyDown(key)  # Open Map
+    time.sleep(seconds)
+    pydirectinput.keyUp(key)
+
+
+def initializepydirectinput():
+    pydirectinput.FAILSAFE = True
+
+
+def countdowntimer(zero, end_timer):
+    print(' You have ', end_timer, ' seconds to switch to the game.')
+    print("Starting", end="")
+    for i in range(zero, end_timer):
+        print(".", end="")
+        time.sleep(1)
+    print("Go")
+
+
+def reportmouseposition(seconds):
+    for i in range(0, seconds):
+        print(pydirectinput.position())
+        time.sleep(1)
+
+
+def teleportnearest():
+    holdkey('g', 0.5)  # Open Map
+    holdkey('f', 0)  # Position to TP
+    holdkey('f', 0)  # Position to TP
+    holdkey('e', 0)  # Select TP
+    holdkey('e', 0)  # Confirm TP
+
+
+def positioning(x, y):
+    win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y)
+
+
+def shoot_arrow(seconds):
+    pydirectinput.mouseDown(button='left')
+    time.sleep(seconds)
+    pydirectinput.mouseUp(button='left')
+
+
+def mainloop(loops):
+    for loops in range(0, loops):
+        initializepydirectinput()  # Initialize pydirectinput
+        time.sleep(5)
+        teleportnearest()  # Teleport
+        time.sleep(6)  # Wait for Loading Screen
+        positioning(-1000, 100)  # Turn
+        holdkey('w', 1.5)  # Walk to Ledge
+        pydirectinput.mouseDown(button='right')  # aim
+        positioning(-110, 100)  # position
+        shoot_arrow(4.5)  # shoot
+        time.sleep(2)  # wait
+        pydirectinput.mouseUp(button='right')  # stop aiming
+        time.sleep(6)  # wait for runes
+
+
+def calculated_runes_earned(chicken_value, loops, current_runes):
+    runes_earned = chicken_value * loops
+    print('Estimated Runes earned ', str(runes_earned))
+    print('Total rune amount should be ', current_runes + runes_earned, '.')
+
+
+def time_estimate(loops):
+    time_elapsed = str(datetime.timedelta(seconds=(27.29 * loops)))
+    time_elapsed_split = time_elapsed.split(':')
+    print('Estimated run time is ', time_elapsed_split[0], ' Hours', time_elapsed_split[1], ' Minutes',
+          time_elapsed_split[2], ' Seconds')
